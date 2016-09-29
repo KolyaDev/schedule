@@ -12,13 +12,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.example.dmitriy.schedule40.R.id.action_settings;
+import static com.example.dmitriy.schedule40.R.menu.popoutmenu;
+
 public class MainActivity extends AppCompatActivity {
 
+    String dayOfTheWeek;
+    int hourOfTheDay;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -28,12 +35,10 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    String dayOfTheWeek;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("H");
         Date d = new Date();
-
+        hourOfTheDay = Integer.parseInt(simpleDateFormat.format(d));
         dayOfTheWeek = sdf.format(d);
+        //hourOfTheDay = 16;
 
         if (savedInstanceState == null) {
             switch (dayOfTheWeek){
@@ -77,11 +84,60 @@ public class MainActivity extends AppCompatActivity {
                     mViewPager.setCurrentItem(0);
                     break;
             }
+            if (hourOfTheDay > 14) mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
         }
 
-
-
     }
+
+    private void showPopupMenu(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.inflate(popoutmenu); // Для Android 4.0
+        // для версии Android 3.0 нужно использовать длинный вариант
+        // popupMenu.getMenuInflater().inflate(R.menu.popupmenu,
+        // popupMenu.getMenu());
+
+        popupMenu
+                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        // Toast.makeText(PopupMenuDemoActivity.this,
+                        // item.toString(), Toast.LENGTH_LONG).show();
+                        // return true;
+                        switch (item.getItemId()) {
+
+                            case R.id.menu1:
+                                Toast.makeText(getApplicationContext(),
+                                        "Вы выбрали PopupMenu 1",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.menu2:
+                                Toast.makeText(getApplicationContext(),
+                                        "Вы выбрали PopupMenu 2",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.menu3:
+                                Toast.makeText(getApplicationContext(),
+                                        "Вы выбрали PopupMenu 3",
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                Toast.makeText(getApplicationContext(), "onDismiss",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        popupMenu.show();
+    }
+
     /*public void onClick(){
         Intent intent = new Intent(MainActivity.this, AboutActivity.class);
         startActivity(intent);
@@ -103,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == action_settings) {
             return true;
         }
 
